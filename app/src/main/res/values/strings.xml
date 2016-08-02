@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PokemonGo</string>
+
+    <string name="banner_ad_unit_id">ca-app-pub-0672003895673063/3210680423</string>
 </resources>

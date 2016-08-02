@@ -15,6 +15,9 @@ import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -72,11 +75,42 @@ public class DetailActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new MySubscriber());
 
-        Picasso.with(getActivity()).setLoggingEnabled(true);
+        MobileAds.initialize(this, "ca-app-pub-0672003895673063~1733947222");
+        binding.ad.setVisibility(View.GONE);
+        binding.ad.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                binding.ad.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                binding.ad.setVisibility(View.GONE);
+            }
+        });
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        binding.ad.loadAd(adRequest);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        binding.ad.resume();
+    }
+
+    @Override
+    public void onPause() {
+        binding.ad.pause();
+        super.onPause();
     }
 
     @Override
     protected void onDestroy() {
+        binding.ad.destroy();
         super.onDestroy();
         if (subscription != null && !subscription.isUnsubscribed()) {
             subscription.unsubscribe();
